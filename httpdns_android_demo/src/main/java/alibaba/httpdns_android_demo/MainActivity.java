@@ -1,23 +1,5 @@
 package alibaba.httpdns_android_demo;
 
-import android.app.Activity;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-
-import com.alibaba.sdk.android.httpdns.DegradationFilter;
-import com.alibaba.sdk.android.httpdns.HttpDns;
-import com.alibaba.sdk.android.httpdns.HttpDnsService;
-
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -31,6 +13,22 @@ import java.util.concurrent.Executors;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
+
+import com.alibaba.sdk.android.httpdns.DegradationFilter;
+import com.alibaba.sdk.android.httpdns.HttpDns;
+import com.alibaba.sdk.android.httpdns.HttpDnsService;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 public class MainActivity extends Activity implements View.OnClickListener{
     private static final String APPLE_URL = "www.apple.com";
@@ -129,10 +127,14 @@ public class MainActivity extends Activity implements View.OnClickListener{
                     String ip = httpdns.getIpByHostAsync(url.getHost());
 
                     if (ip != null) {
-                        // 通过HTTPDNS获取IP成功，进行URL替换和HOST头设置
-                        Log.d(TAG, "Get IP: " + ip + " for host: " + url.getHost() + " from HTTPDNS successfully!");
-                        sendConsoleMessage("Get IP: " + ip + " for host: " + url.getHost() + " from HTTPDNS successfully!");
+                        // 记录通过HTTPDNS获取的IP和对应的sessionId
+                        // 请参考 https://help.aliyun.com/document_detail/100530.html
+                        String message = "HTTPDNS: Got IP: " + ip + " for host: "
+                            + url.getHost()  + " sessionId=" + httpdns.getSessionId();
+                        Log.d(TAG, message);
+                        sendConsoleMessage(message);
 
+                        // 通过HTTPDNS获取IP成功，进行URL替换和HOST头设置
                         String newUrl = originalUrl.replaceFirst(url.getHost(), ip);
                         conn = (HttpURLConnection) new URL(newUrl).openConnection();
                         // 设置HTTP请求头Host域
